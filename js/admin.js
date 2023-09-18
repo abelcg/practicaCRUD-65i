@@ -1,3 +1,10 @@
+import {
+  campoRequerido,
+  validarNumeros,
+  validarURL,
+  validarGeneral,
+} from './validaciones.js';
+
 //traigo los elementos que necesito del html
 let campoCodigo = document.getElementById('codigo');
 console.log(campoCodigo);
@@ -8,51 +15,8 @@ let campoURL = document.getElementById('URL');
 
 let formProductos = document.querySelector('#formProductos');
 
-//validaciones
-
-const campoRequerido = (input) => {
-  console.log('desde campo requerido');
-  console.log(input.value);
-  if (input.value.trim().length > 0) {
-    console.log('aqui esta todo bien');
-    input.className = 'form-control is-valid';
-    return true;
-  } else {
-    console.log('aqui muestro el error');
-    input.className = 'form-control is-invalid';
-    return false;
-  }
-};
-
-const validarNumeros = (input) => {
-  //vamos a usar o a crear una expresion regular
-  let patron = /^[0-9]{1,5}$/;
-  //el método test permite comparar un string con el patrón y devuelve true o false
-  //regex.test('string a validar')
-  if (patron.test(input.value)) {
-    //cumple con la expresoón regular
-    input.className = 'form-control is-valid';
-    return true;
-  } else {
-    input.className = 'form-control is-invalid';
-    return false;
-  }
-};
-
-const validarURL = (input) => {
-  let patron = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
-  if (patron.test(input.value)) {
-    input.className = 'form-control is-valid';
-    return true;
-  } else {
-    input.className = 'form-control is-invalid';
-    return false;
-  }
-};
-
-const validarGeneral = ()=>{
-
-}
+let productoExistente = false; //variable bandera: si productoExistente es false quiero crear,
+//si es true quiero modificar el producto existente
 
 //Asociar un evento a cada elemento obtenido
 
@@ -81,4 +45,31 @@ campoURL.addEventListener('blur', () => {
   validarURL(campoURL);
 });
 
-formProductos.addEventListener('submit', )
+formProductos.addEventListener('submit', guardarProducto);
+
+//empiza la lógica del CRUD
+
+function guardarProducto(e) {
+  //para prevenir la actualización de la página
+  e.preventDefault();
+
+  //verificar que todos los datos sean validos
+  if (
+    validarGeneral(
+      campoCodigo,
+      campoProducto,
+      campoDescripcion,
+      campoCantidad,
+      campoURL
+    )
+  ) {
+    //console.log('los datos son correctos listo para enviar');
+    if (!productoExistente) {
+      //crear producto
+      crearProducto();
+    } else {
+      //modicar producto
+      modificarProducto();
+    }
+  }
+}
