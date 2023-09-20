@@ -94,6 +94,8 @@ function crearProducto() {
   console.log(listaProductos);
   //limpiar formulario
   limpiarFormulario();
+  //Guadar el array de productos dentro de localStorage
+  guardarLocalStorage()
 }
 
 function limpiarFormulario() {
@@ -107,4 +109,8 @@ function limpiarFormulario() {
   campoURL.className = 'form-control';
   //resetar la variable bandera o booleana para el caso de modificarProducto
   productoExistente = false;
+}
+
+function guardarLocalStorage() {
+  localStorage.setItem('arrayProductosKey', JSON.stringify(listaProductos));
 }
