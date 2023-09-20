@@ -20,7 +20,8 @@ let formProductos = document.querySelector('#formProductos');
 let productoExistente = false; //variable bandera: si productoExistente es false quiero crear,
 //si es true quiero modificar el producto existente
 
-let listaProductos = [];
+//si hay productos en localStorage quiero guardarlos en listaProductos, si no listaProductos sea un array vacio
+let listaProductos = JSON.parse(localStorage.getItem('arrayProductosKey')) || [];
 
 //Asociar un evento a cada elemento obtenido
 
@@ -50,6 +51,9 @@ campoURL.addEventListener('blur', () => {
 });
 
 formProductos.addEventListener('submit', guardarProducto);
+
+//Llamo a la función cargaInicial(): si tengo productos en el localStorage, los muestre en la tabla
+cargaInicial()
 
 //empiza la lógica del CRUD
 
@@ -95,7 +99,9 @@ function crearProducto() {
   //limpiar formulario
   limpiarFormulario();
   //Guadar el array de productos dentro de localStorage
-  guardarLocalStorage()
+  guardarLocalStorage();
+  //cargar el producto a la tabla
+  crearFila(productoNuevo);
 }
 
 function limpiarFormulario() {
@@ -113,4 +119,29 @@ function limpiarFormulario() {
 
 function guardarLocalStorage() {
   localStorage.setItem('arrayProductosKey', JSON.stringify(listaProductos));
+}
+
+function crearFila(producto) {
+  let tablaProductos = document.querySelector('#tablaProductos');
+  //usando el operador de asignación de adición vamos concatenar al contenido del tbody una fila
+
+  tablaProductos.innerHTML += `<tr>
+  <td scope="col">${producto.codigo}</td>
+  <td scope="col">${producto.producto}</td>
+  <td scope="col">${producto.descripcion}</td>
+  <td scope="col">${producto.cantidad}</td>
+  <td scope="col">${producto.url}</td>
+  <td><button class="btn btn-warning mb-3" onclick="prepararEdicionProducto()">Editar</button>
+  <button class='btn btn-danger mb-3' onclick="borrarProducto()">Eliminar</button>
+  </td>
+</tr>`;
+}
+
+
+function cargaInicial(){
+  if(listaProductos.length > 0){
+    //crear las filas
+    //listaProductos.forEach((itemProducto)=> crearFila(itemProducto))
+    listaProductos.map((itemProducto)=> crearFila(itemProducto))
+  }
 }
