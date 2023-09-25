@@ -89,7 +89,7 @@ function crearProducto() {
   //el input código tienen q ser de solo lectura ---> agragar disable
   //crear un objeto producto
   let productoNuevo = new Producto(
-    campoCodigo.codigo,
+    campoCodigo.value,
     campoProducto.value,
     campoDescripcion.value,
     campoCantidad.value,
@@ -142,7 +142,7 @@ function crearFila(producto) {
   <td scope="col">${producto.cantidad}</td>
   <td scope="col">${producto.url}</td>
   <td><button class="btn btn-warning mb-3" onclick="prepararEdicionProducto('${producto.codigo}')">Editar</button>
-  <button class='btn btn-danger mb-3' onclick='borrarProducto('fffff')'>Eliminar</button>
+  <button class='btn btn-danger mb-3' onclick='borrarProducto("${producto.codigo}")'>Eliminar</button>
   </td>
 </tr>`;
 }
@@ -217,4 +217,15 @@ function modificarProducto() {
 function borrarTabla() {
   let tablaProductos = document.querySelector('#tablaProductos');
   tablaProductos.innerHTML = '';
+}
+
+
+window.borrarProducto = function(codigo){
+  //opcion 1: encontrar la posición o indice del elemento en el array y borrarlo
+  //1ero: encontrar el indice con findIndex y usar splice(indiceEncontrado, 1)
+  //opcion 2: usando filter
+  let nuevaListaProductos = listaProductos.filter((itemProducto)=> itemProducto.codigo !== codigo);
+  console.log(nuevaListaProductos);
+  listaProductos = nuevaListaProductos;
+  
 }
