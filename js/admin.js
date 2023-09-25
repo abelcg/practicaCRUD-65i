@@ -21,7 +21,8 @@ let productoExistente = false; //variable bandera: si productoExistente es false
 //si es true quiero modificar el producto existente
 
 //si hay productos en localStorage quiero guardarlos en listaProductos, si no listaProductos sea un array vacio
-let listaProductos = JSON.parse(localStorage.getItem('arrayProductosKey')) || [];
+let listaProductos =
+  JSON.parse(localStorage.getItem('arrayProductosKey')) || [];
 
 //Asociar un evento a cada elemento obtenido
 
@@ -53,7 +54,7 @@ campoURL.addEventListener('blur', () => {
 formProductos.addEventListener('submit', guardarProducto);
 
 //Llamo a la función cargaInicial(): si tengo productos en el localStorage, los muestre en la tabla
-cargaInicial()
+cargaInicial();
 
 //empiza la lógica del CRUD
 
@@ -83,9 +84,12 @@ function guardarProducto(e) {
 }
 
 function crearProducto() {
+  //invocar una función codigoUnico() ---> retornar un código único
+  //const codUnico = codigoUnico()
+  //el input código tienen q ser de solo lectura ---> agragar disable
   //crear un objeto producto
   let productoNuevo = new Producto(
-    campoCodigo.value,
+    campoCodigo.codigo,
     campoProducto.value,
     campoDescripcion.value,
     campoCantidad.value,
@@ -100,6 +104,12 @@ function crearProducto() {
   limpiarFormulario();
   //Guadar el array de productos dentro de localStorage
   guardarLocalStorage();
+  //mostrar cartel al usuario
+  Swal.fire(
+    'Producto creado!',
+    'Su producto fue creado correctamente!',
+    'success'
+  )
   //cargar el producto a la tabla
   crearFila(productoNuevo);
 }
@@ -131,17 +141,49 @@ function crearFila(producto) {
   <td scope="col">${producto.descripcion}</td>
   <td scope="col">${producto.cantidad}</td>
   <td scope="col">${producto.url}</td>
-  <td><button class="btn btn-warning mb-3" onclick="prepararEdicionProducto()">Editar</button>
-  <button class='btn btn-danger mb-3' onclick="borrarProducto()">Eliminar</button>
+  <td><button class="btn btn-warning mb-3" onclick="prepararEdicionProducto('${producto.codigo}')">Editar</button>
+  <button class='btn btn-danger mb-3' onclick='borrarProducto('fffff')'>Eliminar</button>
   </td>
 </tr>`;
 }
 
-
-function cargaInicial(){
-  if(listaProductos.length > 0){
+function cargaInicial() {
+  if (listaProductos.length > 0) {
     //crear las filas
     //listaProductos.forEach((itemProducto)=> crearFila(itemProducto))
-    listaProductos.map((itemProducto)=> crearFila(itemProducto))
+    listaProductos.map((itemProducto) => crearFila(itemProducto));
   }
+}
+
+/* 
+como quiero invocar a la función desde html,  no puedo acceder a ella => la agrego como método de
+el objeto global window, así este accesible a todos los documentos
+
+function prepararEdicionProducto(){
+  console.log('desde editar');
+}
+ */
+
+window.prepararEdicionProducto = function (codigo) {
+  console.log('desde editar');
+  console.log(codigo);
+  //buscar el procuto en el array de productos
+  let productoBuscado = listaProductos.find(
+    (itemProducto) => itemProducto.codigo === codigo
+  );
+  console.log(productoBuscado);
+
+  //mostrar el producto en el formulario. No se debe de poder editar el código
+  campoCodigo.value = productoBuscado.codigo;
+  campoProducto.value = productoBuscado.producto;
+  campoDescripcion.value = productoBuscado.descripcion;
+  campoCantidad.value = productoBuscado.campoCantidad;
+  campoURL.value = productoBuscado.url;
+
+  //modificar la variable bandera productoExistente
+  productoExistente = true;
+};
+
+function modificarProducto(){
+  console.log('desde modificar');
 }
