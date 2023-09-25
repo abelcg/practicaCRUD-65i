@@ -109,7 +109,7 @@ function crearProducto() {
     'Producto creado!',
     'Su producto fue creado correctamente!',
     'success'
-  )
+  );
   //cargar el producto a la tabla
   crearFila(productoNuevo);
 }
@@ -184,6 +184,37 @@ window.prepararEdicionProducto = function (codigo) {
   productoExistente = true;
 };
 
-function modificarProducto(){
+function modificarProducto() {
   console.log('desde modificar');
+  //encontrar la posiición del elemento que quiero modificar dentro de mi array de productos
+  let indiceProducto = listaProductos.findIndex(
+    (itemProducto) => itemProducto.codigo === campoCodigo.value
+  );
+  console.log(indiceProducto);
+  //modificar los valores del elemento del array
+  listaProductos[indiceProducto].producto = campoProducto.value;
+  listaProductos[indiceProducto].descripcion = campoDescripcion.value;
+  listaProductos[indiceProducto].cantidad = campoCantidad.value;
+  listaProductos[indiceProducto].url = campoURL.value;
+
+  //actualizar el localStorage
+  guardarLocalStorage();
+  //actualizar la tabla
+  borrarTabla();
+  cargaInicial();
+
+  //mostrar cartel al usuario
+  Swal.fire(
+    'Producto modificado!',
+    'Su producto fue modificado correctamente!',
+    'success'
+  );
+
+  //limpiar el formulario y reseatear la variable bandera
+  limpiarFormulario();
+}
+
+function borrarTabla() {
+  let tablaProductos = document.querySelector('#tablaProductos');
+  tablaProductos.innerHTML = '';
 }
