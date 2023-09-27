@@ -177,7 +177,7 @@ window.prepararEdicionProducto = function (codigo) {
   campoCodigo.value = productoBuscado.codigo;
   campoProducto.value = productoBuscado.producto;
   campoDescripcion.value = productoBuscado.descripcion;
-  campoCantidad.value = productoBuscado.campoCantidad;
+  campoCantidad.value = productoBuscado.cantidad;
   campoURL.value = productoBuscado.url;
 
   //modificar la variable bandera productoExistente
@@ -185,33 +185,46 @@ window.prepararEdicionProducto = function (codigo) {
 };
 
 function modificarProducto() {
-  console.log('desde modificar');
-  //encontrar la posiición del elemento que quiero modificar dentro de mi array de productos
-  let indiceProducto = listaProductos.findIndex(
-    (itemProducto) => itemProducto.codigo === campoCodigo.value
-  );
-  console.log(indiceProducto);
-  //modificar los valores del elemento del array
-  listaProductos[indiceProducto].producto = campoProducto.value;
-  listaProductos[indiceProducto].descripcion = campoDescripcion.value;
-  listaProductos[indiceProducto].cantidad = campoCantidad.value;
-  listaProductos[indiceProducto].url = campoURL.value;
+  Swal.fire({
+    title: 'Seguro que desea editar este producto?',
+    text: 'Puede volver a editar este producto si lo desea!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Confirmar',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log('desde modificar');
+      //encontrar la posiición del elemento que quiero modificar dentro de mi array de productos
+      let indiceProducto = listaProductos.findIndex(
+        (itemProducto) => itemProducto.codigo === campoCodigo.value
+      );
+      console.log(indiceProducto);
+      //modificar los valores del elemento del array
+      listaProductos[indiceProducto].producto = campoProducto.value;
+      listaProductos[indiceProducto].descripcion = campoDescripcion.value;
+      listaProductos[indiceProducto].cantidad = campoCantidad.value;
+      listaProductos[indiceProducto].url = campoURL.value;
 
-  //actualizar el localStorage
-  guardarLocalStorage();
-  //actualizar la tabla
-  borrarTabla();
-  cargaInicial();
+      //actualizar el localStorage
+      guardarLocalStorage();
+      //actualizar la tabla
+      borrarTabla();
+      cargaInicial();
 
-  //mostrar cartel al usuario
-  Swal.fire(
-    'Producto modificado!',
-    'Su producto fue modificado correctamente!',
-    'success'
-  );
+      //mostrar cartel al usuario
+      Swal.fire(
+        'Producto modificado!',
+        'Su producto fue modificado correctamente!',
+        'success'
+      );
 
-  //limpiar el formulario y reseatear la variable bandera
-  limpiarFormulario();
+      //limpiar el formulario y reseatear la variable bandera
+      limpiarFormulario();
+    }
+  });
 }
 
 function borrarTabla() {
@@ -219,13 +232,39 @@ function borrarTabla() {
   tablaProductos.innerHTML = '';
 }
 
+window.borrarProducto = function (codigo) {
+  Swal.fire({
+    title: 'Seguro que desea eliminar este producto?',
+    text: 'La acción no podrá revertirse!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Confirmar!',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      //opcion 1: encontrar la posición o indice del elemento en el array y borrarlo
+      //1ero: encontrar el indice con findIndex y usar splice(indiceEncontrado, 1)
+      //opcion 2: usando filter
+      let nuevaListaProductos = listaProductos.filter(
+        (itemProducto) => itemProducto.codigo !== codigo
+      );
+      console.log(nuevaListaProductos);
+      //actualizar el array original y localStorage
+      listaProductos = nuevaListaProductos;
+      guardarLocalStorage();
 
-window.borrarProducto = function(codigo){
-  //opcion 1: encontrar la posición o indice del elemento en el array y borrarlo
-  //1ero: encontrar el indice con findIndex y usar splice(indiceEncontrado, 1)
-  //opcion 2: usando filter
-  let nuevaListaProductos = listaProductos.filter((itemProducto)=> itemProducto.codigo !== codigo);
-  console.log(nuevaListaProductos);
-  listaProductos = nuevaListaProductos;
-  
-}
+      //actualizar la tabla
+      borrarTabla();
+      cargaInicial();
+
+      //mostrar cartel al usuario
+      Swal.fire(
+        'Producto eliminado!',
+        'Su producto fue eliminado correctamente!',
+        'success'
+      );
+    }
+  });
+};
